@@ -12,12 +12,23 @@ IMPLICIT NONE
 	INTEGER, ALLOCATABLE,dimension(:,:) :: arr
 	INTEGER, ALLOCATABLE,dimension(:) :: temp_arr_1
 	INTEGER, ALLOCATABLE,dimension(:) :: temp_arr_2
-	CHARACTER(len=100000000)::file_path_input
-	CHARACTER(len=100000000)::file_path_output
 
-! Read in path for text file input and output
-	CALL get_command_argument(1,file_path_input)
-	CALL get_command_argument(2,file_path_output)
+	INTEGER arglen1
+	INTEGER arglen2
+	CHARACTER(len=:), ALLOCATABLE :: file_path_input
+	CHARACTER(len=:), ALLOCATABLE :: file_path_output
+
+	!Getting argument lengths
+	CALL GET_COMMAND_ARGUMENT(1,length=arglen1)
+	CALL GET_COMMAND_ARGUMENT(1,length=arglen2)
+
+	!Allocating lengths to file path variables
+	ALLOCATE(CHARACTER(arglen1)::file_path_input)
+	ALLOCATE(CHARACTER(arglen2)::file_path_output)
+
+	!Storing paths into file path variables
+	CALL GET_COMMAND_ARGUMENT(1,file_path_input)
+	CALL GET_COMMAND_ARGUMENT(1,file_path_output)
 
 ! Getting txt file input and output
 	OPEN(UNIT=1,FILE=file_path_input,STATUS='old',ACTION='read')

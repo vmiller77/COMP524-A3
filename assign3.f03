@@ -12,7 +12,9 @@ IMPLICIT NONE
 	INTEGER, ALLOCATABLE,dimension(:,:) :: arr
 	INTEGER, ALLOCATABLE,dimension(:) :: temp_arr_1
 	INTEGER, ALLOCATABLE,dimension(:) :: temp_arr_2
+	INTEGER :: done
 
+	! Variables for input/output files and length
 	INTEGER arglen1
 	INTEGER arglen2
 	CHARACTER(len=:), ALLOCATABLE :: file_path_input
@@ -20,7 +22,7 @@ IMPLICIT NONE
 
 	!Getting argument lengths
 	CALL GET_COMMAND_ARGUMENT(1,length=arglen1)
-	CALL GET_COMMAND_ARGUMENT(1,length=arglen2)
+	CALL GET_COMMAND_ARGUMENT(2,length=arglen2)
 
 	!Allocating lengths to file path variables
 	ALLOCATE(CHARACTER(arglen1)::file_path_input)
@@ -28,7 +30,7 @@ IMPLICIT NONE
 
 	!Storing paths into file path variables
 	CALL GET_COMMAND_ARGUMENT(1,file_path_input)
-	CALL GET_COMMAND_ARGUMENT(1,file_path_output)
+	CALL GET_COMMAND_ARGUMENT(2,file_path_output)
 
 ! Getting txt file input and output
 	OPEN(UNIT=1,FILE=file_path_input,STATUS='old',ACTION='read')
@@ -63,28 +65,35 @@ IMPLICIT NONE
 	END DO
 
 ! Sort array in columns
-! NEED TO MAKE IT SO IF SAME ELEMENT THEN GOES TO NEXT ONE
-	DO i=1,height
-		DO j=i+1,height
-			IF (arr(i,1)>arr(j,1)) THEN
-				temp_arr_1=arr(i,:)
-				temp_arr_2=arr(j,:)
-				arr(i,:)=temp_arr_2
-				arr(j,:)=temp_arr_1
-			END IF
+	done=0
+	! Go through the element of each row
+		!Go through the rows of the arrays
+		DO i=1,height
+			DO j=i+1,height
+				!Compare the kth element of each row
+				done=0
+				DO k=1,width
+					IF(done==0) THEN
+						IF (arr(i,k)>arr(j,k)) THEN
+							temp_arr_1=arr(i,:)
+							temp_arr_2=arr(j,:)
+							arr(i,:)=temp_arr_2
+							arr(j,:)=temp_arr_1
+							done=1
+						ELSE IF (arr(i,k)<arr(j,k)) THEN
+							done=1
+						END IF
+					END IF
+				END DO
+			END DO
 		END DO
-	END DO
+
 
 
 ! Printing out the Array
 	DO i=1,height
-		print *,(arr(i,j),j=1,width)
+!		print *,(arr(i,j),j=1,width)
 		WRITE(2,*) (arr(i,j),j=1,width)
-		!DO j=1,width
-		!print*,arr(i,j)
-		!END DO
 	END DO
-
-! Writing array to output.txt
 
 END PROGRAM assign3
